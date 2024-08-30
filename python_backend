@@ -1,1 +1,92 @@
+##NER_backend.py
+from flask import Flask, request, jsonify
+import hanlp
+from flask_cors import CORS
 
+# 初始化Flask应用
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+# 加载HANLP的多任务自然语言处理模型
+HanLP = hanlp.load(hanlp.pretrained.mtl.CLOSE_TOK_POS_NER_SRL_DEP_SDP_CON_ELECTRA_BASE_ZH)
+
+# 定义路由，处理POST请求
+@app.route('/process_text', methods=['GET', 'POST'])
+def process_text():
+    # 获取前端发送的文本
+    data = request.json
+    input_text = data.get('text', '')
+    print("input_text: ", input_text)
+    # 使用HANLP进行实体识别
+    if input_text:
+        # 处理文本并获取实体识别结果
+        ner_result = HanLP(input_text, tasks=['tok/coarse', 'ner/msra'], skip_tasks='tok/fine')['ner/msra']
+        print("ner_result",ner_result)
+        # 返回实体识别结果
+        return jsonify(ner_result)
+    else:
+        # 如果没有文本输入，返回错误信息
+        return jsonify({'error': 'No text provided'}), 400
+
+# 启动Flask应用
+if __name__ == '__main__':
+    app.run(host='0.0.0.0',port=5000, debug=True)
+    print("Server is running on http://0.0.0.0:5000")
+
+
+
+
+
+
+
+
+## personmatch_backend.py
+from flask import Flask, request, jsonify
+from langchain_community.chat_models import ChatZhipuAI
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+import re
+import os
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+# 这里假设你的模型初始化代码已经执行，并且 `chat` 对象已经创建好
+# 输入自己的可用秘钥apiy
+
+os.environ["ZHIPUAI_API_KEY"] = "7a3b6efb9fad6ac5cc1f46503b063ea7.vZJyLj4Tkx2VFeQa"
+chat = ChatZhipuAI(model="glm-4", temperature=0.5)
+
+@app.route('/compare_persons', methods=['GET','POST'])
+def compare_persons():
+    data = request.json
+    person1_name = data.get('person1_name')
+    person2_name = data.get('person2_name')
+    input_text_1 = data.get('input_text_1')
+    input_text_2 = data.get('input_text_2')
+
+    # person_name_list = [person.split(',')[0] for person in person_list]
+    person1_total = person1_name + input_text_1
+    person2_total = person2_name + input_text_2
+    print("person1_total:",person1_total)
+    print("person2_total:",person2_total)
+
+    result = []
+    messages1 = [
+    SystemMessage(content="你是一个能有效提供帮助的助手。"),
+    HumanMessage(content=f"根据下面给出的两份个人信息，判断他们是否是同一个人,必须先输出相似度（用百分数表示）,再说明简短的理由即可。相似度指的是两者有哪些相似的点，着重说明两者如何相似。说明理由时请务必不要说自己由于信息不足无法准确预测相似度，一步一步有逻辑的根据细节信息简要说明理由。下面是这两个人的信息：\n第一个人的信息为:{person1_total}\n第二个人的信息为:{person2_total}"),
+    ]
+    response = chat.invoke(messages1).content
+    
+    percent = re.findall(r'(\d+%)', response)
+    result.append(percent)
+    result.append(person1_name)
+    result.append(person2_name)
+    result.append(response)
+
+
+    return jsonify({
+        'results': result
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=4000)
