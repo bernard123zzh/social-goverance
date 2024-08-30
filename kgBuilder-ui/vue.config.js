@@ -50,7 +50,8 @@ module.exports = {
       alias: {
         "@": resolve("src")
       }
-    }
+    },
+
   },
   chainWebpack(config) {
     config.plugin("provide").use(webpack.ProvidePlugin, [
@@ -80,6 +81,23 @@ module.exports = {
         symbolId: "icon-[name]"
       })
       .end();
+
+
+    // 添加 .mjs 到解析扩展名中
+    // config.resolve.extensions.prepend('.mjs');
+
+    // 确保使用 babel-loader 处理 .mjs 文件
+    // config.module
+    //     .rule('js')
+    //     .test(/\.mjs$/)
+    //     .include
+    //     .add(resolve('src'))
+    //     .add(resolve('test'))
+    //     .add(resolve('node_modules/webpack-dev-server/client'))
+    //     .end()
+    //     .use('babel-loader')
+    //     .loader('babel-loader')
+    //     .end();
 
     config.when(process.env.NODE_ENV !== "development", config => {
       config

@@ -16,6 +16,11 @@ const routes = [
     component: () => import("../views/kgbuilder/entity_indentify.vue")
   },
   {
+    path: "/knowledge_graph",
+    name: "Knowledge_Graph",
+    component: () => import("../views/kgbuilder/knowledge_graph.vue")
+  },
+  {
     path: "/builder",
     name: "builder",
     component: () => import("../views/kgbuilder/index.vue")

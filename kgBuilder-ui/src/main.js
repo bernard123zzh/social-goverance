@@ -6,10 +6,15 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import axios from "axios";
 import components from './components/index'
-// import echarts from "./utils/echarts";
-import * as echarts from './utils/echarts';
-Vue.prototype.$echarts = echarts;
+import 'echarts';
+import ECharts from 'vue-echarts'
+// import './assets/main.css'
+// import './views/kgbuilder/entity-relation-graph/style.css';
 
+// import echarts from "./utils/echarts";
+// import * as echarts from 'echarts';
+// Vue.prototype.$echarts = echarts;
+Vue.component('ECharts', ECharts)
 
 Vue.prototype.$http = axios; //正确的使用
 Vue.config.productionTip = false;

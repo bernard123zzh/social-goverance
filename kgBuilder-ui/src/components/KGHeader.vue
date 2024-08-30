@@ -10,7 +10,7 @@
     <nav class="nav" id="topnav">
       <h1 class="logo1"><a href="/">FudanCISL</a></h1>
       <h1 class="logo"><a href="/">社会治理三元空间实体识别与匹配平台</a></h1>
-      <ul style="float: left;margin-left: 0px;padding: 20px;">
+      <ul style="padding-top:1.5%;font-size: 20px;">
         <template v-for="nav in navList">
           <li @mouseover="selectStyle(nav)" >
             <a
@@ -46,7 +46,7 @@ export default {
           childrens: []
         },
         {
-          title: "分词平台",
+          title: "知识图谱构建工具",
           icon: "glyphicon glyphicon-cog",
           linkUrl: "/",
           active: false,
@@ -56,6 +56,13 @@ export default {
           title: "人物实体匹配平台",
           icon: "glyphicon glyphicon-cog",
           linkUrl: "/entity",
+          active: false,
+          childrens: []
+        },
+        {
+          title: "分词平台",
+          icon: "glyphicon glyphicon-cog",
+          linkUrl: "/knowledge_graph",
           active: false,
           childrens: []
         },
@@ -134,6 +141,7 @@ export default {
 .logo a { color: #00A7EB;text-decoration: none; }
 .logo1 { float: left;margin-left: 20px;width: 200px;font-size: 26px;padding: 12px;}
 .logo1 a { color: #00A7EB;text-decoration: none; }
+.lg2{ color: #67C23A;text-decoration: none; }
 .hometitle {
     font-size: 18px;
     color: #282828;
